@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ML Use Cases & Python Setup — 30 Key Questions</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 960px; margin: 0 auto; padding: 24px;
+    background: #f5f7fa; color: #1a2233; line-height: 1.55;
+  }
+  h1 { color: #1f3a68; margin-bottom: 4px; }
+  .subtitle { color: #5a6478; margin-bottom: 24px; }
+  .topic {
+    background: #1f3a68; color: white; padding: 12px 18px;
+    margin-top: 32px; border-radius: 8px; font-size: 1.15em; font-weight: 600;
+  }
+  .section {
+    background: #e8eef7; padding: 8px 16px; margin-top: 18px;
+    border-left: 4px solid #1f3a68; font-weight: 600; color: #1f3a68;
+  }
+  .q {
+    background: white; padding: 16px 20px; margin: 14px 0;
+    border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .q-title { font-weight: 600; margin-bottom: 8px; color: #2a3957; }
+  .q-text { margin-bottom: 10px; white-space: pre-wrap; }
+  textarea {
+    width: 100%; min-height: 70px; padding: 8px; font-family: inherit;
+    font-size: 0.95em; border: 1px solid #c0c8d6; border-radius: 4px; resize: vertical;
+  }
+  .mcq label {
+    display: block; padding: 6px 10px; margin: 4px 0; cursor: pointer;
+    border-radius: 4px; border: 1px solid #d4dae6;
+  }
+  .mcq label:hover { background: #f0f4fa; }
+  .mcq input { margin-right: 8px; }
+  .submit-bar {
+    position: sticky; bottom: 0; background: white; padding: 16px;
+    margin-top: 32px; border-top: 2px solid #1f3a68; text-align: center;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+  }
+  button {
+    background: #1f3a68; color: white; border: none; padding: 12px 32px;
+    font-size: 1em; border-radius: 6px; cursor: pointer; font-weight: 600;
+    margin: 0 6px;
+  }
+  button:hover { background: #2a4d8a; }
+  button.secondary { background: #6b7689; }
+  .answer {
+    display: none; margin-top: 12px; padding: 12px 16px;
+    background: #e6f4ea; border-left: 4px solid #2e7d32; border-radius: 4px;
+    font-size: 0.95em;
+  }
+  .answer.show { display: block; }
+  .answer-label { font-weight: 700; color: #1b5e20; margin-bottom: 6px; }
+  .correct { background: #d4edda !important; border-color: #2e7d32 !important; }
+  .incorrect { background: #f8d7da !important; border-color: #c62828 !important; }
+  .score-banner {
+    display: none; background: #1f3a68; color: white; padding: 20px;
+    border-radius: 8px; text-align: center; font-size: 1.2em; margin: 20px 0;
+  }
+  .score-banner.show { display: block; }
+</style>
+</head>
+<body>
+
+<h1>ML Use Cases & Python Setup</h1>
+<p class="subtitle">30 key questions. Answer everything, then click <b>Submit</b> to see model answers.</p>
+
+<div id="quiz"></div>
+<div id="score" class="score-banner"></div>
+
+<div class="submit-bar">
+  <button onclick="submitQuiz()">Submit & Show Answers</button>
+  <button class="secondary" onclick="window.print()">Print</button>
+  <button class="secondary" onclick="resetQuiz()">Reset</button>
+</div>
+
+<script>
+const questions = [
+  { topic: "Topic 1: ML Use Cases & Problem Framing" },
+  { section: "Section A: Identify the ML Problem" },
+
+  { id: "Q1", type: "text",
+    q: "An e-commerce company wants to predict whether a customer will return a purchased product.\n• Classification / Regression / Clustering?\n• Target? Features?",
+    a: "Binary Classification. Target: Returned (Yes/No). Features: product category, price, discount, customer past return rate, review/rating, shipping time, size/color variant, repeat-customer flag." },
+
+  { id: "Q2", type: "text",
+    q: "A bank wants to estimate how much loan amount a customer is likely to repay. ML task & target?",
+    a: "Regression. Target: repaid amount (continuous). Features: income, credit score, employment, existing debts, loan tenure, past repayment history." },
+
+  { id: "Q3", type: "text",
+    q: "A manufacturing company wants to predict machine failures before they occur. Business & ML framing?",
+    a: "Business: reduce downtime (predictive maintenance). ML: binary classification (fail in next N hours) or time-to-failure regression. Features: sensor data (vibration, temperature, pressure), runtime hours, machine age, last maintenance." },
+
+  { id: "Q4", type: "text",
+    q: "A retail company wants to estimate next month's sales. ML type & useful metrics?",
+    a: "Time-series forecasting / regression. Metrics: MAE, RMSE, MAPE. Features: historical sales, seasonality, promotions, holidays, weather." },
+
+  { section: "Section B: Business Problem → ML Problem" },
+
+  { id: "Q5", type: "text",
+    q: "A telecom company is losing customers monthly. Frame: Business Objective, ML Task, Target, Features, KPI.",
+    a: "Objective: reduce churn. Task: binary classification (churn in next 30 days). Target: Churned (Y/N). Features: tenure, monthly bill, plan, usage, complaints, payment delays. KPI: retention rate / % churn reduction. Model metric: Recall, F1, AUC." },
+
+  { id: "Q6", type: "text",
+    q: "An insurance company wants to detect fraudulent claims. Frame the ML problem.",
+    a: "Binary classification on imbalanced data. Target: Fraud (Y/N). Features: claim amount/type, time since policy, claim frequency, claimant history, location, doctor/garage involved. Metric: Precision-Recall AUC, Recall (accuracy is misleading)." },
+
+  { id: "Q7", type: "text",
+    q: "An online education platform wants to identify students likely to drop out. Frame the ML problem.",
+    a: "Binary classification. Target: Dropout (Y/N) within X days. Features: login frequency, video completion %, assignment submissions, quiz scores, time spent, payment status. Metric: Recall / F1." },
+
+  { section: "Section C: Feature Engineering" },
+
+  { id: "Q8", type: "text",
+    q: "For customer churn prediction, list ~10 possible features.",
+    a: "Tenure, monthly charges, total charges, contract type, payment method, service type, support tickets, complaints, data usage, plan changes in last 6 months, late payments." },
+
+  { id: "Q9", type: "text",
+    q: "For house price prediction, list ~10 possible features.",
+    a: "Area, bedrooms, bathrooms, locality, age of property, floor, furnishing, parking, amenities, distance to schools/metro, recent nearby sale prices." },
+
+  { id: "Q10", type: "text",
+    q: "Dataset has: CustomerID, Age, Gender, Salary, SubscriptionType, MonthlyUsage. Which are features vs targets?",
+    a: "CustomerID = identifier (skip). Features: Age, Gender, Salary, MonthlyUsage. Possible targets depending on problem: SubscriptionType (classification) or MonthlyUsage (regression)." },
+
+  { section: "Section D: Evaluation Metrics" },
+
+  { id: "Q11", type: "text",
+    q: "Which metric for: (a) Spam detection (b) House price (c) Churn (d) Recommendation?",
+    a: "(a) Precision/Recall/F1. (b) RMSE/MAE/R². (c) Recall/F1/AUC. (d) Precision@K, Recall@K, NDCG, MAP." },
+
+  { id: "Q12", type: "mcq",
+    q: "Fraud dataset: 99% Non-Fraud, 1% Fraud. Model predicts all as Non-Fraud. Accuracy & usefulness?",
+    options: [
+      "Accuracy 99%, model is excellent",
+      "Accuracy 99%, but useless — recall on fraud = 0",
+      "Accuracy 1%, model is useless",
+      "Accuracy 50%, model is mediocre"
+    ],
+    correct: 1,
+    a: "Accuracy = 99% but Recall on the fraud class = 0. Useless for the business goal — this is why accuracy alone is misleading on imbalanced data." },
+
+  { id: "Q13", type: "text",
+    q: "Difference between Precision, Recall, F1. When is Recall more important?",
+    a: "Precision = TP/(TP+FP). Recall = TP/(TP+FN). F1 = harmonic mean. Recall matters more when missing a positive is costly — cancer detection, fraud, predictive maintenance." },
+
+  { id: "Q14", type: "text",
+    q: "Which metric for medical diagnosis / fraud / recommendation, and why?",
+    a: "Medical: Recall (missing a sick patient is dangerous). Fraud: PR-AUC / Recall (catch fraud without drowning analysts in false alarms). Recommendation: Precision@K, NDCG (top-K relevance)." },
+
+  { section: "Section E: Case Studies" },
+
+  { id: "Q15", type: "text",
+    q: "Design ML for: predict which leads are most likely to convert.",
+    a: "Binary classification with probability ranking. Target: Converted (Y/N). Features: lead source, demographics, website behavior, email opens, response time, company size. Output: ranked score; sales works top-N. Metric: AUC, Precision@K." },
+
+  { id: "Q16", type: "text",
+    q: "Design ML for: detect defective products from images.",
+    a: "Computer vision — CNN image classification (ResNet/EfficientNet) or object detection if locating defects. Data: labeled good vs defective images. Metric: Recall (don't miss defects) + Precision. Deployment: edge camera on assembly line." },
+
+  { topic: "Topic 2: Python Setup for ML" },
+  { section: "Section F: Environment & Tools" },
+
+  { id: "Q17", type: "text",
+    q: "Why create a virtual environment for every ML project?",
+    a: "Isolates dependencies — different projects need different library versions. Prevents conflicts, makes the project reproducible, easy to share via requirements.txt / environment.yml." },
+
+  { id: "Q18", type: "text",
+    q: "Difference between Python, Anaconda, Miniconda.",
+    a: "Python = the language/interpreter. Anaconda = full distribution with Python + 250+ libs + conda (~3 GB). Miniconda = minimal Python + conda only (~400 MB), install what you need." },
+
+  { id: "Q19", type: "text",
+    q: "Explain each part of: conda create -n ml python=3.11",
+    a: "conda → package manager. create → make a new env. -n ml → name it 'ml'. python=3.11 → install Python 3.11. Result: isolated env 'ml' with Python 3.11." },
+
+  { section: "Section G: Libraries" },
+
+  { id: "Q20", type: "text",
+    q: "Purpose of numpy, pandas, matplotlib, scikit-learn, xgboost.",
+    a: "numpy → numerical arrays & vectorized math. pandas → tabular DataFrames. matplotlib → plotting. scikit-learn → classical ML (regression, classification, clustering, preprocessing, metrics). xgboost → gradient-boosted trees, top-tier on tabular data." },
+
+  { id: "Q21", type: "mcq",
+    q: "Match: (a) Data manipulation (b) Model training (c) Visualization (d) Numerical computing",
+    options: [
+      "pandas / scikit-learn / matplotlib / numpy",
+      "numpy / pandas / xgboost / matplotlib",
+      "matplotlib / numpy / scikit-learn / pandas",
+      "scikit-learn / pandas / numpy / xgboost"
+    ],
+    correct: 0,
+    a: "(a) pandas (b) scikit-learn (c) matplotlib (d) numpy." },
+
+  { id: "Q22", type: "text",
+    q: "Why is NumPy generally faster than Python lists?",
+    a: "NumPy uses contiguous fixed-type C arrays, so ops run in compiled C with SIMD vectorization. Python lists hold pointers to heterogeneous objects → interpreter overhead and pointer chasing." },
+
+  { id: "Q23", type: "text",
+    q: "What is broadcasting in NumPy? Give an example.",
+    a: "Operating on arrays of different shapes by virtually stretching the smaller one. e.g. np.array([[1,2,3],[4,5,6]]) + np.array([10,20,30]) → [[11,22,33],[14,25,36]] — no loop needed." },
+
+  { section: "Section H: Jupyter & Project Structure" },
+
+  { id: "Q24", type: "text",
+    q: "Advantages of Jupyter Notebooks, and when to avoid them.",
+    a: "Pros: cell-by-cell execution, inline plots, markdown narration, great for EDA & demos. Avoid for: production code, libraries, scheduled jobs, multi-developer projects — hidden state, poor diffs, no testing." },
+
+  { id: "Q25", type: "text",
+    q: "Purpose of folders: src/, tests/, notebooks/, models/",
+    a: "src/ → production source code. tests/ → unit/integration tests. notebooks/ → exploration & experiments. models/ → trained model artifacts (often gitignored; stored in MLflow / S3)." },
+
+  { section: "Section I: Production ML" },
+
+  { id: "Q26", type: "text",
+    q: "Why do companies use Docker for ML projects, and what does FastAPI solve?",
+    a: "Docker: packages code + deps + OS libs into a portable image — same container runs in dev, staging, prod, k8s. Critical for Python/CUDA/library version pinning. FastAPI: exposes the model as a REST API quickly — JSON in, predictions out, async, auto OpenAPI docs, Pydantic validation." },
+
+  { id: "Q27", type: "text",
+    q: "What is MLflow used for?",
+    a: "Tracks experiments (params, metrics, artifacts), versions and registers models, packages them for deployment. Lets teams compare runs, reproduce results, promote models from staging to production." },
+
+  { section: "Section J: Practical Thinking" },
+
+  { id: "Q28", type: "text",
+    q: "A model performs well in training but poorly in production. Possible reasons?",
+    a: "Overfitting, data leakage, training/serving skew (different preprocessing), data drift, concept drift, feature pipeline bugs, class imbalance, different feature engineering at inference." },
+
+  { id: "Q29", type: "text",
+    q: "Your model's performance drops after 6 months. What might have happened?",
+    a: "Data drift (input distribution changed), concept drift (target relationship changed), seasonality, broken upstream pipeline, new customer segments, external shocks. Solution: monitoring + scheduled retraining." },
+
+  { id: "Q30", type: "text",
+    q: "Company says: 'Our revenue is decreasing. Can you build an ML model?' What do you ask before picking any algorithm?",
+    a: "(1) Business objective — what specifically should change? (2) Current process / baseline? (3) Available data — what, where, quality, history? (4) Target variable — is this even an ML problem? (5) Success metric — business KPI + model metric. (6) Deployment constraints — latency, scale, batch vs realtime. (7) Expected ROI. (8) Stakeholders, timeline, regulatory limits. ML may not be the answer at all. Problem framing > algorithm choice." }
+];
+
+const container = document.getElementById('quiz');
+questions.forEach(item => {
+  if (item.topic) {
+    const div = document.createElement('div');
+    div.className = 'topic'; div.textContent = item.topic;
+    container.appendChild(div); return;
+  }
+  if (item.section) {
+    const div = document.createElement('div');
+    div.className = 'section'; div.textContent = item.section;
+    container.appendChild(div); return;
+  }
+  const div = document.createElement('div');
+  div.className = 'q'; div.id = item.id;
+  let inner = `<div class="q-title">${item.id}</div><div class="q-text">${escapeHtml(item.q)}</div>`;
+  if (item.type === 'mcq') {
+    inner += '<div class="mcq">';
+    item.options.forEach((opt, i) => {
+      inner += `<label><input type="radio" name="${item.id}" value="${i}"> ${escapeHtml(opt)}</label>`;
+    });
+    inner += '</div>';
+  } else {
+    inner += `<textarea placeholder="Type your answer here..." id="ans-${item.id}"></textarea>`;
+  }
+  inner += `<div class="answer" id="model-${item.id}"><div class="answer-label">✓ Model Answer</div>${escapeHtml(item.a)}</div>`;
+  div.innerHTML = inner;
+  container.appendChild(div);
+});
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function submitQuiz() {
+  let mcqTotal = 0, mcqCorrect = 0;
+  questions.forEach(item => {
+    if (!item.id) return;
+    document.getElementById('model-' + item.id).classList.add('show');
+    if (item.type === 'mcq') {
+      mcqTotal++;
+      const sel = document.querySelector(`input[name="${item.id}"]:checked`);
+      const labels = document.querySelectorAll(`input[name="${item.id}"]`);
+      labels.forEach((inp, i) => {
+        const lbl = inp.parentElement;
+        if (i === item.correct) lbl.classList.add('correct');
+        if (sel && parseInt(sel.value) === i && i !== item.correct) lbl.classList.add('incorrect');
+      });
+      if (sel && parseInt(sel.value) === item.correct) mcqCorrect++;
+    }
+  });
+  const banner = document.getElementById('score');
+  banner.classList.add('show');
+  banner.innerHTML = `Submitted! Auto-graded MCQs: <b>${mcqCorrect} / ${mcqTotal}</b>. Compare your open-ended answers with the model answers shown in green.`;
+  banner.scrollIntoView({behavior:'smooth'});
+}
+
+function resetQuiz() {
+  if (!confirm('Clear all answers?')) return;
+  document.querySelectorAll('textarea').forEach(t => t.value = '');
+  document.querySelectorAll('input[type=radio]').forEach(r => r.checked = false);
+  document.querySelectorAll('.answer').forEach(a => a.classList.remove('show'));
+  document.querySelectorAll('.mcq label').forEach(l => l.classList.remove('correct','incorrect'));
+  document.getElementById('score').classList.remove('show');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+</body>
+</html>
